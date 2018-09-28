@@ -1,15 +1,17 @@
-/*
-* CoolQ Demo for VC++ 
-* Api Version 9
-* Written by Coxxs & Thanks for the help of orzFly
-*/
+ï»¿/*/
+/*  main.cpp(Vesion 1.0.0) 
+/*  å…³é”®è¯è‡ªåŠ¨å›å¤æœºå™¨äºº   
+/*  
+/*  Created by acdzh on 2018/09/28.  
+/*  Copyright Â© 2018å¹´ acdzh. All rights reserved.
+/*/
 
 #include "stdafx.h"
 #include "stdlib.h"
 #include "string"
 #include "cqp.h"
 # include "time.h"
-#include "appmain.h" //Ó¦ÓÃAppIDµÈĞÅÏ¢£¬ÇëÕıÈ·ÌîĞ´£¬·ñÔò¿áQ¿ÉÄÜÎŞ·¨¼ÓÔØ
+#include "appmain.h" //åº”ç”¨AppIDç­‰ä¿¡æ¯ï¼Œè¯·æ­£ç¡®å¡«å†™ï¼Œå¦åˆ™é…·Qå¯èƒ½æ— æ³•åŠ è½½
 #include<vector>
 #include<iostream>
 #include <fstream>
@@ -20,12 +22,12 @@ using namespace std;
 //*******************************************************************************************************************
 //*******************************************************************************************************************
 
-#define MY_GROUP 5566445566//Ä¬ÈÏÈººÅ£¬Êµ¼ÊÉÏÕâ¸öÉ¾ÁËÒ²Ã»Ê²Ã´Ó°Ïì
-#define MY_SELF_QQ 123456789//µ÷ÊÔÕßQQ
+#define MY_GROUP 5566445566//é»˜è®¤ç¾¤å·ï¼Œå®é™…ä¸Šè¿™ä¸ªç†è®ºä¸Šæ˜¯æ²¡ä»€ä¹ˆç”¨çš„
+#define MY_SELF_QQ 123456789//è°ƒè¯•è€…QQï¼Œå› ä¸ºæˆ‘ä¸ä¼šå†™å¯¹è¯æ¡†ï¼Œå› æ­¤ä¸‹é¢çš„ç›¸å…³åŠŸèƒ½æˆ‘éƒ½æ˜¯é»˜è®¤æ³¨é‡Šæ‰çš„ï¼ŒåŒ…æ‹¬å‘å¸ƒçš„cpkæ–‡ä»¶ï¼Œæœ‰å…´è¶£å¯ä»¥è‡ªè¡Œæ‰“å¼€ç¼–è¯‘//135è¡Œ
 
-int ac = -1; //AuthCode µ÷ÓÃ¿áQµÄ·½·¨Ê±ĞèÒªÓÃµ½
+int ac = -1; //AuthCode è°ƒç”¨é…·Qçš„æ–¹æ³•æ—¶éœ€è¦ç”¨åˆ°
 bool enabled = false;
-//const char *cstr = str.c_str();how to make str to char*
+
 
 
 class my_replys {
@@ -87,8 +89,8 @@ void remove_out(string &a, string &b) {
 
 void back_up() {
 	ofstream outfile;
-	outfile.open("test.txt", ios::out| ios::trunc);
-	outfile << '&';//ÓÃÓÚ¶ÁÎÄ¼şÊ±·½±ãÅĞ¶Ï¸ÃÎÄ¼şÊÇ·ñÎª¿Õ
+	outfile.open("app/com.acdzh.keywordBot.txt", ios::out| ios::trunc);
+	outfile << '&';//ç”¨äºè¯»æ–‡ä»¶æ—¶æ–¹ä¾¿åˆ¤æ–­è¯¥æ–‡ä»¶æ˜¯å¦ä¸ºç©º
 	if (!key_words.empty()) {
 		string a;
 		string b;
@@ -103,32 +105,34 @@ void back_up() {
 		}
 	}
 	outfile.close();
-	CQ_sendPrivateMsg(ac, MY_SELF_QQ, "±¸·İ³É¹¦£¡");
 }
 
 void read_in() {
-	ifstream infile;
+	
 	string temp;
 	string a;
 	string b;
-	infile.open("test.txt", ios::in);
-	char ch = infile.get();
-	if (ch != EOF && ch == '&') {
-		while(getline(infile,temp)){
-			a = "";
-			b = "";
-			for (unsigned int i = 0; i < temp.size(); i++) {
-				if (temp[i] == '|') {
-					a = temp.substr(0, i - 1);
-					b = temp.substr(i + 2);
-					push_in(a, b);
-					//CQ_sendPrivateMsg(ac, MY_SELF_QQ, "¶ÁÈ¡Êı¾İ³É¹¦£¡11111");
+
+		ifstream infile;
+		infile.open("app/com.acdzh.keywordBot.txt", ios::in);
+		char ch = infile.get();
+		if (ch != EOF && ch == '&') {
+			while(getline(infile,temp)){
+				a = "";
+				b = "";
+				for (unsigned int i = 0; i < temp.size(); i++) {
+					if (temp[i] == '|') {
+						a = temp.substr(0, i - 1);
+						b = temp.substr(i + 2);
+						push_in(a, b);
+					}
 				}
 			}
 		}
-	}
-	infile.close();
-	CQ_sendPrivateMsg(ac, MY_SELF_QQ, "¶ÁÈ¡Êı¾İ³É¹¦£¡");
+		infile.close();
+	
+	
+	//CQ_sendPrivateMsg(ac, MY_SELF_QQ, "è¯»å–æ•°æ®æˆåŠŸï¼");
 }
 
 string my_print(vector<my_replys> &a) {
@@ -157,11 +161,11 @@ string my_print(string a) {
 		}
 	}
 	if (have_found == 0) {
-		out = "Î´ÕÒµ½¸Ã¹Ø¼ü´Ê¡£";
+		out = "æœªæ‰¾åˆ°è¯¥å…³é”®è¯ã€‚";
 		return out;
 	}
 	else {
-		out = "Êı¾İ¿âÎª¿Õ£¡";
+		out = "æ•°æ®åº“ä¸ºç©ºï¼";
 		return out;
 	}
 }
@@ -191,13 +195,13 @@ bool if_right(string a) {
 }
 
 void my_operator(string msg, int64_t qqGroup = MY_GROUP) {
-	if (msg[0] == '!' || msg[0] == '£¡') {
+	if (msg[0] == '!' || msg[0] == 'ï¼') {
 		stringstream ss(msg);
 		string temp;
 		string temp2;
 		string temp3;
 		string out;
-		if ((strstr(msg.c_str(), "!list ") || strstr(msg.c_str(), "£¡list ")) && if_right(msg)) {
+		if ((strstr(msg.c_str(), "!list ") || strstr(msg.c_str(), "ï¼list ")) && if_right(msg)) {
 			ss >> temp;
 			ss >> temp;
 			ss.clear();
@@ -206,32 +210,32 @@ void my_operator(string msg, int64_t qqGroup = MY_GROUP) {
 			out.clear();
 
 		}
-		else if ((strstr(msg.c_str(), "!add ") || strstr(msg.c_str(), "£¡add ")) && if_right(msg)) {
+		else if ((strstr(msg.c_str(), "!add ") || strstr(msg.c_str(), "ï¼add ")) && if_right(msg)) {
 			ss >> temp;
 			ss >> temp;
 			ss >> temp2;
 			ss.clear();
 			push_in(temp, temp2);
-			out = "Ìí¼Ó³É¹¦£¬ÄãËµ " + temp + " ÎÒËµ " + temp2 + " .";
+			out = "æ·»åŠ æˆåŠŸï¼Œä½ è¯´ " + temp + " æˆ‘è¯´ " + temp2 + " .";
 			CQ_sendGroupMsg(ac, qqGroup, out.c_str());
 			out.clear();
 		}
-		else if ((strstr(msg.c_str(), "!remove ") || strstr(msg.c_str(), "£¡remove ")) && if_right(msg)) {
+		else if ((strstr(msg.c_str(), "!remove ") || strstr(msg.c_str(), "ï¼remove ")) && if_right(msg)) {
 			ss >> temp;
 			ss >> temp;
 			ss >> temp2;
 			ss.clear();
 			remove_out(temp, temp2);
-			out = "Çå³ı³É¹¦£¬ÄãËµ " + temp + " ÎÒ²»»áÔÙËµ " + temp2 + " .";
+			out = "æ¸…é™¤æˆåŠŸï¼Œä½ è¯´ " + temp + " æˆ‘ä¸ä¼šå†è¯´ " + temp2 + " .";
 			CQ_sendGroupMsg(ac, qqGroup, out.c_str());
 			out.clear();
 		}
-		else if ((msg == "!LIST_ALL") || (msg == "£¡LIST_ALL")) {
+		else if ((msg == "!LIST_ALL") || (msg == "ï¼LIST_ALL")) {
 			out = my_print(key_words);
 			CQ_sendGroupMsg(ac, qqGroup, out.c_str());
 			out.clear();
 		}
-		else if ((strstr(msg.c_str(), "!edit ") || strstr(msg.c_str(), "£¡edit "))&& if_right(msg)) {
+		else if ((strstr(msg.c_str(), "!edit ") || strstr(msg.c_str(), "ï¼edit "))&& if_right(msg)) {
 			ss >> temp;
 			ss >> temp;
 			ss >> temp2;
@@ -239,17 +243,18 @@ void my_operator(string msg, int64_t qqGroup = MY_GROUP) {
 			ss.clear();
 			remove_out(temp, temp2);
 			push_in(temp, temp3);
-			out = "ĞŞ¸Ä³É¹¦£¬ÄãËµ " + temp + " ÎÒ²»»áÔÙËµ " + temp2 + " ,¶øÊÇËµ " + temp3 + " .";
+			out = "ä¿®æ”¹æˆåŠŸï¼Œä½ è¯´ " + temp + " æˆ‘ä¸ä¼šå†è¯´ " + temp2 + " ,è€Œæ˜¯è¯´ " + temp3 + " .";
 			CQ_sendGroupMsg(ac, qqGroup, out.c_str());
 			out.clear();
 		}
-		else if ((msg == "!help") ||( msg == "£¡help")) {
-			out = "!list ¹Ø¼ü´Ê: ÁĞ³ö¹Ø¼ü´Ê¶ÔÓ¦µÄËùÓĞ»Ø¸´;\n!add ¹Ø¼ü´Ê1 ¹Ø¼ü´Ê2 : Îª¹Ø¼ü´Ê1Ôö¼ÓÒ»¸öÎª¹Ø¼ü´Ê¶şµÄ»Ø¸´;\n!edit ¹Ø¼ü´Ê1 ¹Ø¼ü´Ê2 ¹Ø¼ü´Ê3 : µ±Ëµ³ö¹Ø¼ü´Ê1Ê±£¬²»ÔÙ»Ø¸´¹Ø¼ü´Ê2£¬¶øÊÇ»Ø¸´¹Ø¼ü´Ê3;\n!remove ¹Ø¼ü´Ê1 ¹Ø¼ü´Ê2 : ½â³ı¶şÕß¹ØÁª;\n!help : ²é¿´°ïÖú;\n!backup : ±¸·İµ±Ç°´Ê¿â.";
+		else if ((msg == "!help") ||( msg == "ï¼help")) {
+			out = "!list å…³é”®è¯: åˆ—å‡ºå…³é”®è¯å¯¹åº”çš„æ‰€æœ‰å›å¤;\n!add å…³é”®è¯1 å…³é”®è¯2 : ä¸ºå…³é”®è¯1å¢åŠ ä¸€ä¸ªä¸ºå…³é”®è¯äºŒçš„å›å¤;\n!edit å…³é”®è¯1 å…³é”®è¯2 å…³é”®è¯3 : å½“è¯´å‡ºå…³é”®è¯1æ—¶ï¼Œä¸å†å›å¤å…³é”®è¯2ï¼Œè€Œæ˜¯å›å¤å…³é”®è¯3;\n!remove å…³é”®è¯1 å…³é”®è¯2 : è§£é™¤äºŒè€…å…³è”;\n!help : æŸ¥çœ‹å¸®åŠ©;\n!backup : å¤‡ä»½å½“å‰è¯åº“.\nåˆ«å¿˜äº†ç»å¸¸å¤‡ä»½ï¼";
 			CQ_sendGroupMsg(ac, qqGroup, out.c_str());
 			out.clear();
 		}
-		else if ((msg == "!backup") ||( msg == "£¡backup")) {
+		else if ((msg == "!backup") ||( msg == "ï¼backup")) {
 			back_up();
+			CQ_sendGroupMsg(ac, qqGroup, "å¤‡ä»½æˆåŠŸï¼");
 		}
 }	
 	else {
@@ -274,197 +279,60 @@ void my_operator(string msg, int64_t qqGroup = MY_GROUP) {
 //***************************************************************************************************************************
 //***************************************************************************************************************************
 
-
-
-/* 
-* ·µ»ØÓ¦ÓÃµÄApiVer¡¢Appid£¬´ò°üºó½«²»»áµ÷ÓÃ
-*/
 CQEVENT(const char*, AppInfo, 0)() {
 	return CQAPPINFO;
 }
 
-
-/* 
-* ½ÓÊÕÓ¦ÓÃAuthCode£¬¿áQ¶ÁÈ¡Ó¦ÓÃĞÅÏ¢ºó£¬Èç¹û½ÓÊÜ¸ÃÓ¦ÓÃ£¬½«»áµ÷ÓÃÕâ¸öº¯Êı²¢´«µİAuthCode¡£
-* ²»ÒªÔÚ±¾º¯Êı´¦ÀíÆäËûÈÎºÎ´úÂë£¬ÒÔÃâ·¢ÉúÒì³£Çé¿ö¡£ÈçĞèÖ´ĞĞ³õÊ¼»¯´úÂëÇëÔÚStartupÊÂ¼şÖĞÖ´ĞĞ£¨Type=1001£©¡£
-*/
 CQEVENT(int32_t, Initialize, 4)(int32_t AuthCode) {
 	ac = AuthCode;
 	return 0;
 }
 
-
-/*
-* Type=1001 ¿áQÆô¶¯
-* ÎŞÂÛ±¾Ó¦ÓÃÊÇ·ñ±»ÆôÓÃ£¬±¾º¯Êı¶¼»áÔÚ¿áQÆô¶¯ºóÖ´ĞĞÒ»´Î£¬ÇëÔÚÕâÀïÖ´ĞĞÓ¦ÓÃ³õÊ¼»¯´úÂë¡£
-* Èç·Ç±ØÒª£¬²»½¨ÒéÔÚÕâÀï¼ÓÔØ´°¿Ú¡££¨¿ÉÒÔÌí¼Ó²Ëµ¥£¬ÈÃÓÃ»§ÊÖ¶¯´ò¿ª´°¿Ú£©
-*/
 CQEVENT(int32_t, __eventStartup, 0)() {
 
 	return 0;
 }
 
-
-/*
-* Type=1002 ¿áQÍË³ö
-* ÎŞÂÛ±¾Ó¦ÓÃÊÇ·ñ±»ÆôÓÃ£¬±¾º¯Êı¶¼»áÔÚ¿áQÍË³öÇ°Ö´ĞĞÒ»´Î£¬ÇëÔÚÕâÀïÖ´ĞĞ²å¼ş¹Ø±Õ´úÂë¡£
-* ±¾º¯Êıµ÷ÓÃÍê±Ïºó£¬¿áQ½«ºÜ¿ì¹Ø±Õ£¬Çë²»ÒªÔÙÍ¨¹ıÏß³ÌµÈ·½Ê½Ö´ĞĞÆäËû´úÂë¡£
-*/
 CQEVENT(int32_t, __eventExit, 0)() {
 	return 0;
 }
 
-/*
-* Type=1003 Ó¦ÓÃÒÑ±»ÆôÓÃ
-* µ±Ó¦ÓÃ±»ÆôÓÃºó£¬½«ÊÕµ½´ËÊÂ¼ş¡£
-* Èç¹û¿áQÔØÈëÊ±Ó¦ÓÃÒÑ±»ÆôÓÃ£¬ÔòÔÚ_eventStartup(Type=1001,¿áQÆô¶¯)±»µ÷ÓÃºó£¬±¾º¯ÊıÒ²½«±»µ÷ÓÃÒ»´Î¡£
-* Èç·Ç±ØÒª£¬²»½¨ÒéÔÚÕâÀï¼ÓÔØ´°¿Ú¡££¨¿ÉÒÔÌí¼Ó²Ëµ¥£¬ÈÃÓÃ»§ÊÖ¶¯´ò¿ª´°¿Ú£©
-*/
+
 CQEVENT(int32_t, __eventEnable, 0)() {
 	read_in();
 	enabled = true;
 	return 0;
 }
-
-
-/*
-* Type=1004 Ó¦ÓÃ½«±»Í£ÓÃ
-* µ±Ó¦ÓÃ±»Í£ÓÃÇ°£¬½«ÊÕµ½´ËÊÂ¼ş¡£
-* Èç¹û¿áQÔØÈëÊ±Ó¦ÓÃÒÑ±»Í£ÓÃ£¬Ôò±¾º¯Êı*²»»á*±»µ÷ÓÃ¡£
-* ÎŞÂÛ±¾Ó¦ÓÃÊÇ·ñ±»ÆôÓÃ£¬¿áQ¹Ø±ÕÇ°±¾º¯Êı¶¼*²»»á*±»µ÷ÓÃ¡£
-*/
 CQEVENT(int32_t, __eventDisable, 0)() {
 	enabled = false;
 	return 0;
 }
-
-
-/*
-* Type=21 Ë½ÁÄÏûÏ¢
-* subType ×ÓÀàĞÍ£¬11/À´×ÔºÃÓÑ 1/À´×ÔÔÚÏß×´Ì¬ 2/À´×ÔÈº 3/À´×ÔÌÖÂÛ×é
-*/
 CQEVENT(int32_t, __eventPrivateMsg, 24)(int32_t subType, int32_t msgId, int64_t fromQQ, const char *msg, int32_t font) {
-
-	//Èç¹ûÒª»Ø¸´ÏûÏ¢£¬Çëµ÷ÓÃ¿áQ·½·¨·¢ËÍ£¬²¢ÇÒÕâÀï return EVENT_BLOCK - ½Ø¶Ï±¾ÌõÏûÏ¢£¬²»ÔÙ¼ÌĞø´¦Àí  ×¢Òâ£ºÓ¦ÓÃÓÅÏÈ¼¶ÉèÖÃÎª"×î¸ß"(10000)Ê±£¬²»µÃÊ¹ÓÃ±¾·µ»ØÖµ
-	//Èç¹û²»»Ø¸´ÏûÏ¢£¬½»ÓÉÖ®ºóµÄÓ¦ÓÃ/¹ıÂËÆ÷´¦Àí£¬ÕâÀï return EVENT_IGNORE - ºöÂÔ±¾ÌõÏûÏ¢
-
 	//return EVENT_BLOCK;
 	return EVENT_IGNORE;
 }
- 
-
-/*
-* Type=2 ÈºÏûÏ¢
-*/
 CQEVENT(int32_t, __eventGroupMsg, 36)(int32_t subType, int32_t msgId, int64_t fromGroup, int64_t fromQQ, const char *fromAnonymous, const char *msg, int32_t font) {
 
-	//string a = my_print(key_words);
-	//CQ_sendGroupMsg(ac, MY_GROUP, a.c_str());
 	if (fromGroup != MY_GROUP) {
 		my_operator(msg,fromGroup);
-
 	}
 	else {
 		my_operator(msg);
 	}
-	
-
-	return EVENT_IGNORE; //¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û¡°_eventPrivateMsg¡±º¯Êı
+	return EVENT_IGNORE; 
 }
 
-
-/*
-* Type=4 ÌÖÂÛ×éÏûÏ¢
-*/
 CQEVENT(int32_t, __eventDiscussMsg, 32)(int32_t subType, int32_t msgId, int64_t fromDiscuss, int64_t fromQQ, const char *msg, int32_t font) {
 
-	return EVENT_IGNORE; //¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û¡°_eventPrivateMsg¡±º¯Êı
+	return EVENT_IGNORE; 
 }
 
-
-/*
-* Type=101 ÈºÊÂ¼ş-¹ÜÀíÔ±±ä¶¯
-* subType ×ÓÀàĞÍ£¬1/±»È¡Ïû¹ÜÀíÔ± 2/±»ÉèÖÃ¹ÜÀíÔ±
-*/
-CQEVENT(int32_t, __eventSystem_GroupAdmin, 24)(int32_t subType, int32_t sendTime, int64_t fromGroup, int64_t beingOperateQQ) {
-
-	return EVENT_IGNORE; //¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û¡°_eventPrivateMsg¡±º¯Êı
-}
-
-
-/*
-* Type=102 ÈºÊÂ¼ş-Èº³ÉÔ±¼õÉÙ
-* subType ×ÓÀàĞÍ£¬1/ÈºÔ±Àë¿ª 2/ÈºÔ±±»Ìß 3/×Ô¼º(¼´µÇÂ¼ºÅ)±»Ìß
-* fromQQ ²Ù×÷ÕßQQ(½ösubTypeÎª2¡¢3Ê±´æÔÚ)
-* beingOperateQQ ±»²Ù×÷QQ
-*/
-CQEVENT(int32_t, __eventSystem_GroupMemberDecrease, 32)(int32_t subType, int32_t sendTime, int64_t fromGroup, int64_t fromQQ, int64_t beingOperateQQ) {
-
-	return EVENT_IGNORE; //¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û¡°_eventPrivateMsg¡±º¯Êı
-}
-
-
-/*
-* Type=103 ÈºÊÂ¼ş-Èº³ÉÔ±Ôö¼Ó
-* subType ×ÓÀàĞÍ£¬1/¹ÜÀíÔ±ÒÑÍ¬Òâ 2/¹ÜÀíÔ±ÑûÇë
-* fromQQ ²Ù×÷ÕßQQ(¼´¹ÜÀíÔ±QQ)
-* beingOperateQQ ±»²Ù×÷QQ(¼´¼ÓÈºµÄQQ)
-*/
-CQEVENT(int32_t, __eventSystem_GroupMemberIncrease, 32)(int32_t subType, int32_t sendTime, int64_t fromGroup, int64_t fromQQ, int64_t beingOperateQQ) {
-
-	return EVENT_IGNORE; //¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û¡°_eventPrivateMsg¡±º¯Êı
-}
-
-
-/*
-* Type=201 ºÃÓÑÊÂ¼ş-ºÃÓÑÒÑÌí¼Ó
-*/
-CQEVENT(int32_t, __eventFriend_Add, 16)(int32_t subType, int32_t sendTime, int64_t fromQQ) {
-
-	return EVENT_IGNORE; //¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û¡°_eventPrivateMsg¡±º¯Êı
-}
-
-
-/*
-* Type=301 ÇëÇó-ºÃÓÑÌí¼Ó
-* msg ¸½ÑÔ
-* responseFlag ·´À¡±êÊ¶(´¦ÀíÇëÇóÓÃ)
-*/
-CQEVENT(int32_t, __eventRequest_AddFriend, 24)(int32_t subType, int32_t sendTime, int64_t fromQQ, const char *msg, const char *responseFlag) {
-
-	//CQ_setFriendAddRequest(ac, responseFlag, REQUEST_ALLOW, "");
-
-	return EVENT_IGNORE; //¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û¡°_eventPrivateMsg¡±º¯Êı
-}
-
-
-/*
-* Type=302 ÇëÇó-ÈºÌí¼Ó
-* subType ×ÓÀàĞÍ£¬1/ËûÈËÉêÇëÈëÈº 2/×Ô¼º(¼´µÇÂ¼ºÅ)ÊÜÑûÈëÈº
-* msg ¸½ÑÔ
-* responseFlag ·´À¡±êÊ¶(´¦ÀíÇëÇóÓÃ)
-*/
-CQEVENT(int32_t, __eventRequest_AddGroup, 32)(int32_t subType, int32_t sendTime, int64_t fromGroup, int64_t fromQQ, const char *msg, const char *responseFlag) {
-
-	//if (subType == 1) {
-	//	CQ_setGroupAddRequestV2(ac, responseFlag, REQUEST_GROUPADD, REQUEST_ALLOW, "");
-	//} else if (subType == 2) {
-	//	CQ_setGroupAddRequestV2(ac, responseFlag, REQUEST_GROUPINVITE, REQUEST_ALLOW, "");
-	//}
-
-	return EVENT_IGNORE; //¹ØÓÚ·µ»ØÖµËµÃ÷, ¼û¡°_eventPrivateMsg¡±º¯Êı
-}
-
-/*
-* ²Ëµ¥£¬¿ÉÔÚ .json ÎÄ¼şÖĞÉèÖÃ²Ëµ¥ÊıÄ¿¡¢º¯ÊıÃû
-* Èç¹û²»Ê¹ÓÃ²Ëµ¥£¬ÇëÔÚ .json ¼°´Ë´¦É¾³ıÎŞÓÃ²Ëµ¥
-*/
 CQEVENT(int32_t, __menuA, 0)() {
-	MessageBoxA(NULL, "ÕâÊÇmenuA£¬ÔÚÕâÀïÔØÈë´°¿Ú£¬»òÕß½øĞĞÆäËû¹¤×÷¡£", "" ,0);
+	MessageBoxA(NULL, "è¯·åœ¨ç¾¤èŠæ¶ˆæ¯ä¸­å‘é€!helpæŸ¥çœ‹ã€‚", "" ,0);
 	return 0;
 }
 
 CQEVENT(int32_t, __menuB, 0)() {
-	MessageBoxA(NULL, "ÕâÊÇmenuB£¬ÔÚÕâÀïÔØÈë´°¿Ú£¬»òÕß½øĞĞÆäËû¹¤×÷¡£", "" ,0);
+	MessageBoxA(NULL, "https://github.com/acdzh", "" ,0);
 	return 0;
 }

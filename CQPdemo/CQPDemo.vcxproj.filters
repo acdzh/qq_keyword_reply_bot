@@ -43,6 +43,6 @@
     <Library Include="CQP.lib" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="com.example.democ.json" />
+    <None Include="com.acdzh.keywordBot.json" />
   </ItemGroup>
 </Project>

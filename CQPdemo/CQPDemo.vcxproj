@@ -14,7 +14,7 @@
     <ProjectGuid>{9D36EAFF-6BF0-4BDE-A20C-5BCB92DE79D6}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CQPSDK</RootNamespace>
-    <ProjectName>com.example.democ</ProjectName>
+    <ProjectName>com.acdzh.keywordBot</ProjectName>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -101,7 +101,7 @@
     <Library Include="CQP.lib" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="com.example.democ.json" />
+    <None Include="com.acdzh.keywordBot.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
