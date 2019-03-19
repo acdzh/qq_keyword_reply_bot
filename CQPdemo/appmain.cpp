@@ -1,39 +1,41 @@
 ﻿/*/
-/*  main.cpp(Vesion 1.0.0) 
+/*  main.cpp(Vesion 1.1.0) 
 /*  关键词自动回复机器人   
 /*  
-/*  Created by acdzh on 2018/09/28.  
-/*  Copyright © 2018年 acdzh. All rights reserved.
+/*  Created by acdzh on 2019/03/19.  
+/*  Copyright © 2019年 acdzh. All rights reserved.
 /*/
 
-#include "stdafx.h"
+#include <windows.h>
+#include "stdint.h"
 #include "stdlib.h"
 #include "string"
 #include "cqp.h"
-# include "time.h"
+#include "time.h"
 #include "appmain.h" //应用AppID等信息，请正确填写，否则酷Q可能无法加载
-#include<vector>
-#include<iostream>
+#include <vector>
+#include <iostream>
 #include <fstream>
-#include<algorithm>
-#include<sstream>
+#include <algorithm>
+#include <sstream>
 using namespace std;
+
 //*******************************************************************************************************************
 //*******************************************************************************************************************
 //*******************************************************************************************************************
 
-#define MY_GROUP 5566445566//默认群号，实际上这个理论上是没什么用的
-#define MY_SELF_QQ 123456789//调试者QQ，因为我不会写对话框，因此下面的相关功能我都是默认注释掉的，包括发布的cpk文件，有兴趣可以自行打开编译//135行
+#define MY_GROUP 5566445566//默认群号, 实际上这个没有用到
+#define MY_SELF_QQ 123456789//调试者QQ, 同样未用到
 
 int ac = -1; //AuthCode 调用酷Q的方法时需要用到
 bool enabled = false;
-
 
 
 class my_replys {
 public:
 	string keyword;
 	vector<string> replys;
+	my_replys() {}
 	my_replys(string txt, string reply) {
 		keyword = txt;
 		replys.clear();
@@ -42,6 +44,12 @@ public:
 	void add(string reply) {
 		if(find(replys.begin(), replys.end(), reply) == replys.end() )
 		replys.push_back(reply);
+	}
+	bool has(string reply) {
+		if (find(replys.begin(), replys.end(), reply) == replys.end())
+			return false;
+		else
+			return true;
 	}
 	void remove(string reply) {
 		vector<string>::iterator ret;
@@ -52,6 +60,24 @@ public:
 };
 vector<my_replys> key_words;
 
+bool has(string &a, string &b) {
+	for ( auto i : key_words) {
+		if (i.keyword == a) {
+			if (i.has(b)) return true;
+		}
+	}
+	return false;
+}
+
+bool has(string &a) {
+	for (auto i : key_words) {
+		if (i.keyword == a) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void push_in(string &a, string &b) {
 	if (key_words.empty()) {
 		my_replys temp(a, b);
@@ -59,7 +85,7 @@ void push_in(string &a, string &b) {
 	}
 	else {
 		int qqq = -1;
-		for (int i = 0; i < key_words.size(); i++) {
+		for (size_t i = 0; i < key_words.size(); i++) {
 			if (key_words[i].keyword == a) {
 				qqq = 0;
 				key_words[i].add(b);
@@ -75,7 +101,7 @@ void push_in(string &a, string &b) {
 
 void remove_out(string &a, string &b) {
 	if (!key_words.empty()) {
-		for (int i = 0; i < key_words.size(); i++) {
+		for (size_t i = 0; i < key_words.size(); i++) {
 			if (key_words[i].keyword == a) {
 				key_words[i].remove(b);
 			}
@@ -87,6 +113,23 @@ void remove_out(string &a, string &b) {
 	}
 }
 
+void remove_out(string &a) {
+	if (!key_words.empty()) {
+		bool has = false;
+		int flag = 0;
+		for (size_t i = 0; i < key_words.size(); i++) {
+			if (key_words[i].keyword == a) {
+				has = true;
+				flag = i;
+				break;
+			}
+		}
+		if (has == true) {
+			key_words.erase(key_words.begin() + flag);
+		}
+	}
+}
+
 void back_up() {
 	ofstream outfile;
 	outfile.open("app/com.acdzh.keywordBot.txt", ios::out| ios::trunc);
@@ -94,10 +137,10 @@ void back_up() {
 	if (!key_words.empty()) {
 		string a;
 		string b;
-		for (int i = 0; i < key_words.size(); i++) {
+		for (size_t i = 0; i < key_words.size(); i++) {
 			a = key_words[i].keyword;
 			if (!key_words[i].replys.empty()) {
-				for (int j = 0; j < (key_words[i].replys).size(); j++) {
+				for (size_t j = 0; j < (key_words[i].replys).size(); j++) {
 					b = key_words[i].replys[j];
 					outfile << a << "&|&" << b << endl;
 				}
@@ -137,40 +180,35 @@ void read_in() {
 
 string my_print(vector<my_replys> &a) {
 	string temp = "";
-	for (int i = 0; i < a.size(); i++) {
+	for (size_t i = 0; i < a.size(); i++) {
 		temp = temp + a[i].keyword + ":\n    ";
-		for (int j = 0; j < a[i].replys.size(); j++) {
+		for (size_t j = 0; j < a[i].replys.size(); j++) {
 			temp = temp + a[i].replys[j] + "   ";
 		}
 		temp = temp + "\n";
 	}
+	temp.erase(temp.end() - 1);
 	return temp;
 }
 string my_print(string a) {
 	int have_found  = 0;
 	string out = "";
 	if (!key_words.empty()) {
-		for (int i = 0; i < key_words.size(); i++) {
+		for (size_t i = 0; i < key_words.size(); i++) {
 			if (key_words[i].keyword == a) {
 				have_found = 1;
-				for (int j = 0; j < key_words[i].replys.size(); j++) {
+				for (size_t j = 0; j < key_words[i].replys.size(); j++) {
 					out = out + key_words[i].replys[j] + "\n";
 				}
+				out.erase(out.end() - 1);
 				return out;
 			}
 		}
 	}
-	if (have_found == 0) {
-		out = "未找到该关键词。";
-		return out;
-	}
-	else {
-		out = "数据库为空！";
-		return out;
-	}
+	return "";
 }
 
-bool if_right(string a) {
+bool is_right(string a) { //这个函数是个智障..不要用
 	if (strstr(a.c_str(), " ")) {
 		if (a[a.size() - 1] == ' ') {
 			a.erase(a.size() - 1);
@@ -195,73 +233,220 @@ bool if_right(string a) {
 }
 
 void my_operator(string msg, int64_t qqGroup = MY_GROUP) {
-	if (msg[0] == '!' || msg[0] == '！') {
+	if (msg[0] == '!' || msg[0] == '~') {
+		msg[0] = '!';
 		stringstream ss(msg);
 		string temp;
 		string temp2;
 		string temp3;
 		string out;
-		if ((strstr(msg.c_str(), "!list ") || strstr(msg.c_str(), "！list ")) && if_right(msg)) {
+		if (strstr(msg.c_str(), "!list") ) {
 			ss >> temp;
+			temp.clear();
 			ss >> temp;
 			ss.clear();
-			out = my_print(temp);
+			if (temp.empty()) { out = "Error: 你倒是给个关键词啊!\n      (╯°Д°)╯ ┴─┴\n( 请继续补充参数: key )";}
+			else {
+				if (has(temp)) {
+					out = my_print(temp);
+				}
+				else {
+					out = "Error: 我还没有学过这个关键词. \n         ╮(′～‵〞)╭\n( 请检查要查询的关键词 )";
+				}
+				
+			}
+			//out = to_string(temp.size()); //debug
 			CQ_sendGroupMsg(ac, qqGroup, out.c_str());
 			out.clear();
 
 		}
-		else if ((strstr(msg.c_str(), "!add ") || strstr(msg.c_str(), "！add ")) && if_right(msg)) {
+		else if (strstr(msg.c_str(), "!add") ) {
 			ss >> temp;
+			temp.clear();
 			ss >> temp;
+			temp2.clear();
 			ss >> temp2;
 			ss.clear();
-			push_in(temp, temp2);
-			out = "添加成功，你说 " + temp + " 我说 " + temp2 + " .";
+
+			if (temp.empty()) {
+				out = "Error: 你倒是给个关键词啊! \n         (╯°Д°)╯ ┴─┴\n( 请继续补充参数: key, value )";
+			}
+			else {
+				if (temp2 == "") {
+					out = "Error: 你倒是教给我要回复什么啊! \n         (╯°Д°)╯ ┴─┴\n ( 请继续补充参数: value )";
+				}
+				else {
+					if (has(temp, temp2)) { out = "Error: 我早就会这句了!\n         < (￣︶￣)>"; }
+					else {
+						push_in(temp, temp2);
+						out = "添加成功，你说\"" + temp + "\"我说\"" + temp2 + "\".";
+					}
+				}
+			}
 			CQ_sendGroupMsg(ac, qqGroup, out.c_str());
 			out.clear();
 		}
-		else if ((strstr(msg.c_str(), "!remove ") || strstr(msg.c_str(), "！remove ")) && if_right(msg)) {
+		else if (strstr(msg.c_str(), "!del") ) {
 			ss >> temp;
+			temp.clear();
 			ss >> temp;
+			temp2.clear();
 			ss >> temp2;
 			ss.clear();
-			remove_out(temp, temp2);
-			out = "清除成功，你说 " + temp + " 我不会再说 " + temp2 + " .";
+
+			if (temp == "") {
+				out = "Error: 你倒是给个关键词啊! \n         (╯°Д°)╯ ┴─┴( 请继续补充参数: key value )";
+			}
+			else {
+				if (temp2 == "") {
+					out = "Error: 你倒是要让我忘掉哪一句啊! \n         (｡ŏ_ŏ)( 请继续补充参数: value )";
+				}
+				else {
+					if (has(temp, temp2)) {
+						remove_out(temp, temp2);
+						out = "已删除: key = \"" + temp + "\", value = \"" + temp2 + "\".";
+					}
+					else {
+						out = "Error: 删除失败, 因为我本来就不会这句. \n         _(┐「ε:)_\n( 请检查提供的参数 )";
+					}
+				}
+			}
+
 			CQ_sendGroupMsg(ac, qqGroup, out.c_str());
 			out.clear();
 		}
-		else if ((msg == "!LIST_ALL") || (msg == "！LIST_ALL")) {
+		else if (strstr(msg.c_str(), "!keydel") ) {
+			ss >> temp;
+			temp.clear();
+			ss >> temp;
+			ss.clear();
+			if (temp == "") {
+				out = "Error: 你倒是给个关键词啊! \n         (╯°Д°)╯ ┴─┴\n( 请继续补充参数: key )";
+			}
+			else {
+				if (has(temp)) {
+					string values = my_print(temp);
+					remove_out(temp);
+					out = "已删除: key = \"" + temp + "\", value =\n" + values;
+				}
+				else {
+					out = "Error: 我还没有学过这个关键词, 无法删除. \n         ╮(′～‵〞)╭\n( 请检查要删除的关键词 )";
+				}
+			}
+
+
+			CQ_sendGroupMsg(ac, qqGroup, out.c_str());
+			out.clear();
+		}
+		else if ((msg == "!LIST_ALL")) {
 			out = my_print(key_words);
 			CQ_sendGroupMsg(ac, qqGroup, out.c_str());
 			out.clear();
 		}
-		else if ((strstr(msg.c_str(), "!edit ") || strstr(msg.c_str(), "！edit "))&& if_right(msg)) {
+		else if ((msg == "!LIST_ALL_DEBUG")) {
+			ifstream infile;
+			infile.open("app/com.acdzh.keywordBot.txt", ios::in);
+			while (getline(infile, temp)) {
+				out += (temp + "\n");
+			}
+			out.erase(out.end() - 1);
+			temp.clear();
+			CQ_sendGroupMsg(ac, qqGroup, out.c_str());
+			out.clear();
+		}
+		else if (strstr(msg.c_str(), "!edit") ) {
 			ss >> temp;
+			temp.clear();
 			ss >> temp;
+			temp2.clear();
 			ss >> temp2;
+			temp3.clear();
 			ss >> temp3;
 			ss.clear();
-			remove_out(temp, temp2);
-			push_in(temp, temp3);
-			out = "修改成功，你说 " + temp + " 我不会再说 " + temp2 + " ,而是说 " + temp3 + " .";
+			if (temp == "") {
+				out = "Error: 你倒是给个关键词啊! \n         (╯°Д°)╯ ┴─┴\n( 请继续补充参数: key value1 value2 )";
+			}
+			else {
+				if (temp2 == "") {
+					out = "Error: 快告诉我要修改哪一句! \n         ( • ̀ω•́ )\n( 请继续补充参数: value1 value2 )";
+				}
+				else {
+
+
+
+
+
+					if (has(temp, temp2)) {
+						if (temp3 == "") {
+							out = "Error: 这句我倒是会, 可是你想让我改成什么啊! \n         (｡ŏ_ŏ)\n( 请继续补充参数: value2 )";
+						}
+						else {
+							if (has(temp, temp3)) {
+								out = "Error: 我这两句都会, 不用改了! \n         < (￣︶￣)> \n( 要删除第一句请使用 !del 命令...orz )";
+							}
+							else {
+								remove_out(temp, temp2);
+								push_in(temp, temp3);
+								out = "已修改: key = \"" + temp + "\", old_value = \"" + temp2 + "\", new_value = \"" + temp3 + "\".";
+
+							}
+						}
+					}
+					else {
+						if (temp3 == "") {
+							out = "Error: 我本来就不会这一句, 而且也不知道要改成什么, 改不了...  \n         ╮(′～‵〞)╭ \n( 要修改请检查参数并继续补充参数: value2 )\n(要直接添加第二句请使用 !add 命令...orz)";
+						}
+						else {
+							out = "Error: 我本来就不会第一句, 改不了...  \n         ╮(′～‵〞)╭ \n( 要直接添加第二句请使用 !add 命令...orz )";
+						}
+						
+					}
+				}
+			}
+
 			CQ_sendGroupMsg(ac, qqGroup, out.c_str());
 			out.clear();
 		}
-		else if ((msg == "!help") ||( msg == "！help")) {
-			out = "!list 关键词: 列出关键词对应的所有回复;\n!add 关键词1 关键词2 : 为关键词1增加一个为关键词二的回复;\n!edit 关键词1 关键词2 关键词3 : 当说出关键词1时，不再回复关键词2，而是回复关键词3;\n!remove 关键词1 关键词2 : 解除二者关联;\n!help : 查看帮助;\n!backup : 备份当前词库.\n别忘了经常备份！";
+		else if (msg == "!help" || msg == "!帮助") {
+		out = "!list  key\n"
+			"    列出关键词 key 对应的所有回复;\n\n"
+			"!add  key  value\n"
+			"    学习回复: key-value ;\n\n"
+			"!edit  key  old_value  new_value\n"
+			"    更新回复;\n\n"
+			"!del  key  value\n"
+			"    忘记这一个回复_orz;\n\n"
+			"!keydel  key\n"
+			"    忘记关键词 key 的所有回复_orz;\n\n"
+			"!help\n"
+			"!帮助  :\n"
+			"    查看帮助;\n\n"
+			// "!restart\n"
+			// "!重启  : \n"
+			// "    只是个重启而已_orz; \n\n"
+			// "!backup\n"
+			// "!备份  : \n"
+			// "    备份当前词库.\n\n"
+			"(仅能识别英文符号..\n"
+			"    更多请访问 https://github.com/acdzh/qq_keyword_reply_bot";
+
 			CQ_sendGroupMsg(ac, qqGroup, out.c_str());
 			out.clear();
 		}
-		else if ((msg == "!backup") ||( msg == "！backup")) {
+		else if (msg == "!backup" || msg == "!备份") {
 			back_up();
 			CQ_sendGroupMsg(ac, qqGroup, "备份成功！");
 		}
-}	
+		else if (msg == "!restart" || msg == "!重启") {
+			read_in();
+			CQ_sendGroupMsg(ac, qqGroup, "重启成功！");
+		}
+	}
 	else {
 		string temp;
 		int ran;
 		string out;
-		for (int i = 0; i < key_words.size(); i++) {
+		for (size_t i = 0; i < key_words.size(); i++) {
 			temp = key_words[i].keyword;
 			if (strstr(msg.c_str(), temp.c_str())) {
 				srand((unsigned int)(time(NULL)));
